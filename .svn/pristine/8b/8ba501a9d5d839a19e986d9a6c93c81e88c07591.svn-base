@@ -1,0 +1,41 @@
+import os, subprocess
+
+def print_header():
+	print("Audio-vedeo recursive converter (c) Nicodemo 2017\n")
+
+def convert_audio(path):
+	print_header()
+	for f in listdir(path):
+		if isdir(f):
+			print("Found " + f + " dir: going inside...")
+			convert_audio(f)
+		else if not f.endswith(".mp3"):
+			print("Found " + f + ", converting it...")
+			process = subprocess.Popen("ffmpeg -i " + f + " -acodec libmp3lame -b:a 192k " + f.split(".")[-1] + ".mp3")
+
+def convert_video(path):
+	print_header()
+	for f in listdir(path):
+		if isdir(f):
+			print("Found " + f + " dir: going inside...")
+			convert_audio(f)
+		else if not f.endswith(".mp4") and not f.endswith(".avi"):
+			print("Found " + f + ", converting it...")
+			process = subprocess.Popen("ffmpeg -i " + f + " -vcodec libx264 -acodec copy -s 640x480 " + f.split(".")[-1] + ".mp4")
+
+#ENTRY POINT
+if sys.argv[0] == "-a":
+	try:
+		convert_audio(sys.argv[1])
+	except Exception e:
+		print(e)
+		print("***** ffmpeg is needed to be installed")
+else if sys.argv[0] == "-v":
+	try:
+		convert_video(sys.argv[1])
+	except Exception e:
+		print(e)
+		print("ffmpeg is needed to be installed")
+else:
+	print_header(); print("\n")
+	print("Usage convert -a|-v <basepath>\n")
